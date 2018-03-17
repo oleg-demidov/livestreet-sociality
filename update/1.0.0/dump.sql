@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `prefix_sociality` ( 
+CREATE TABLE IF NOT EXISTS `prefix_sociality_social` ( 
     `id` INT(11) NOT NULL AUTO_INCREMENT , 
     `user_id` INT(11) NOT NULL , 
     `profile_url` VARCHAR(255) NULL DEFAULT NULL ,

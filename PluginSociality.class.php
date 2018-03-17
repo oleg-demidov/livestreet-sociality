@@ -25,6 +25,7 @@ class PluginSociality extends Plugin
     public function Init()
     {
         $this->Component_Add('sociality:buts');
+      
     }
 
 
@@ -35,9 +36,7 @@ class PluginSociality extends Plugin
      */
     public function Deactivate() 
     {
-        if ($this->isTableExists('prefix_sociality')){
-            $this->exportSQLQuery('DROP TABLE prefix_sociality');
-        }
+        
         return true;
     }
 

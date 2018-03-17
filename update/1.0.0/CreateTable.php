@@ -11,21 +11,43 @@ class PluginSociality_Update_CreateTable extends ModulePluginManager_EntityUpdat
 	/**
 	 * Выполняется при обновлении версии
 	 */
-	public function up() {
-		if (!$this->isTableExists('prefix_sociality')) {
-			/**
-			 * При активации выполняем SQL дамп
-			 */
-			$this->exportSQL(Plugin::GetPath(__CLASS__).'/dump.sql');
-		}
-	}
+    private $aDumps = [
+        'prefix_sociality_social' => 'dump'
+    ];
 
-	/**
-	 * Выполняется при откате версии
-	 */
-	public function down() {
-            if ($this->isTableExists('prefix_sociality')){
-		$this->exportSQLQuery('DROP TABLE prefix_sociality');
+
+    public function up() {        
+        $this->exportSQL(Plugin::GetPath(__CLASS__).'update/1.0.0/dump_user.sql');
+        foreach($this->aDumps as $sTable => $sFile){
+            if(!$this->exportDump($sTable, $sFile)){
+                return false;
             }
-	}
+        }
+        
+	return true;
+    }
+    
+    protected function exportDump($sTable, $sFile) {
+        if (!$this->isTableExists($sTable)) {
+            $sResult = $this->exportSQL(Plugin::GetPath(__CLASS__).'update/1.0.0/'.$sFile.'.sql');
+            $this->Logger_Notice(serialize($sResult));             
+        }
+        return true;
+    }
+    
+    protected function removeTable($sTable) {
+        if ($this->isTableExists($sTable)){
+            return $this->exportSQLQuery("DROP TABLE IF EXISTS $sTable");
+        }
+    }
+
+    /**
+     * Выполняется при откате версии
+     */
+    public function down() {
+        foreach($this->aDumps as $sTable => $sFile){
+            $aResult = $this->removeTable($sTable);
+            $this->Logger_Notice(serialize($aResult));
+        }
+    }
 }
