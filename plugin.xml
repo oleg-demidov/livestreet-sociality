@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+    <name>
+        <lang name="default">Sociality</lang>
+    </name>
+    <author>
+        <lang name="default">Oleg Demidov</lang>
+    </author>
+    <homepage>https://vk.com/u_demidova</homepage>
+    <settings></settings>
+    <version>1.0.0</version>
+    <requires>
+        <livestreet>2.0.0</livestreet>
+        <plugins>
+        </plugins>
+    </requires>
+    <description>
+        <lang name="russian">Вход через соц-сети для LiveStreet CMS</lang>
+        <lang name="default">Enter social for LiveStreet CMS</lang>
+    </description>
+</plugin>
