@@ -18,6 +18,22 @@ $config['$config_scheme$'] = array(
         ),
     ),
     
+    'register_scenario' =>  array(
+        'type'        => 'string',
+        'name'        => 'Register scenario',
+        'description' => '',
+        'validator'   => array(
+            'type'   => 'Enum',
+            'params' => array(
+                'enum'       => array(
+                    'return_to_form',
+                    'register_hard',
+                ),
+                'allowEmpty' => false,
+            ),
+        ),
+    ),
+    
     'size' =>  array(
         'type'        => 'string',
         'name'        => 'Size buttons',
@@ -33,6 +49,8 @@ $config['$config_scheme$'] = array(
             ),
         ),
     ),
+    
+    
     
     /*
      * Yandex
@@ -542,6 +560,7 @@ $config['$config_sections$'] = array(
         'name' => 'Order',
         'allowed_keys' => array(
                 'order',
+                'register_scenario',
                 'size'
         )
     ),

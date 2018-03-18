@@ -1,10 +1,11 @@
 {
-    "name": "buts",
+    "name": "profile",
     "version": "1.0.0",
     "dependencies": {
+        
     },
     "templates": {
-        "buts": "buts.tpl"
+        "profile": "profile.tpl"
     },
     "scripts": {
     },

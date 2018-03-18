@@ -35,6 +35,8 @@ class PluginSociality_ActionSociality_EventOAuth extends Event {
             $hybridauth = new Hybrid_Auth( $providers );
 
             $оProvider = $hybridauth->authenticate( $this->sCurrentEvent );
+            
+            $oSession = $hybridauth->getSessionData( );
 
             $oUserProfile = $оProvider->getUserProfile();
 
@@ -46,10 +48,11 @@ class PluginSociality_ActionSociality_EventOAuth extends Event {
         if(!is_object($oUserProfile)){            
             return Router::ActionError('', $this->Lang_Get('plugin.sociality.auth.error.ha_no_data', ['name' => $this->sCurrentEvent]));
         }  
-       
+        
+        $this->Session_Set('provider', $this->sCurrentEvent);
         $this->Session_Set('oUserProfile', $oUserProfile);        
        
-        $this->Session_Drop('authRedirect');
+        $this->Session_Drop('authRedirect');        //print_r(json_decode($oSession));print_r($oUserProfile);
         
         Router::LocationAction( $sRedirect );
     }
