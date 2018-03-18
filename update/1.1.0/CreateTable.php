@@ -16,8 +16,16 @@ class PluginSociality_Update_CreateTable extends ModulePluginManager_EntityUpdat
     ];
 
 
-    public function up() {        
-        $this->exportSQL(Plugin::GetPath(__CLASS__).'update/1.0.0/dump_user.sql');
+    public function up() {  
+        /*
+         * Никто не устанавливал. Можно сносить таблицу
+         */
+        $this->removeTable('prefix_sociality');
+        /*
+         * Меняем ключ email
+         */
+        $this->exportSQL(Plugin::GetPath(__CLASS__).'update/1.1.0/dump_user.sql');
+        
         foreach($this->aDumps as $sTable => $sFile){
             if(!$this->exportDump($sTable, $sFile)){
                 return false;
@@ -29,7 +37,7 @@ class PluginSociality_Update_CreateTable extends ModulePluginManager_EntityUpdat
     
     protected function exportDump($sTable, $sFile) {
         if (!$this->isTableExists($sTable)) {
-            $sResult = $this->exportSQL(Plugin::GetPath(__CLASS__).'update/1.0.0/'.$sFile.'.sql');
+            $sResult = $this->exportSQL(Plugin::GetPath(__CLASS__).'update/1.1.0/'.$sFile.'.sql');
             $this->Logger_Notice(serialize($sResult));             
         }
         return true;

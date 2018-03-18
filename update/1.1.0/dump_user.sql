@@ -1,0 +1,1 @@
+ALTER TABLE `prefix_user` DROP INDEX `user_mail`, ADD INDEX `user_mail` (`user_mail`) USING BTREE;
