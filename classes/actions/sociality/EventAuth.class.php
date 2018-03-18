@@ -11,6 +11,7 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
     
     public function Init()
     {
+        
     }
 
     public function EventRegister() {
@@ -20,6 +21,9 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
         if(Config::Get('plugin.sociality.register_scenario') == 'return_to_form'){
             $this->Session_Set('authRedirect', 'auth/register');
         }else{
+            if (Config::Get('general.reg.invite')  and !$this->Session_Get('invite_code')) {
+                Router::LocationAction('auth/invite');
+            }
             $this->Session_Set('authRedirect', 'sociality/register_hard');
         }
         
@@ -27,7 +31,7 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
     }  
     
     
-    public function EventRegisterHard() {
+    public function EventRegisterHard() {  
         
         Config::Set('module.user.captcha_use_registration', false);
         
@@ -101,15 +105,12 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
         $oUser->setActivate(1);
         $oUser->setActivateKey(null);
             
-        $this->Hook_Run('registration_validate_before', array('oUser' => $oUser));
         /**
          * Запускаем валидацию
          */
         if ($oUser->_Validate()) {
-            $this->Hook_Run('registration_validate_after', array('oUser' => $oUser));
             $oUser->setPassword($this->User_MakeHashPassword($oUser->getPassword()));
             if ($this->User_Add($oUser)) {
-                $this->Hook_Run('registration_after', array('oUser' => $oUser));
                 
                 /**
                  * Подписываем пользователя на дефолтные события в ленте активности
