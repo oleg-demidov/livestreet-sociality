@@ -8,54 +8,26 @@
  */
 
 class PluginSociality_Update_CreateTable extends ModulePluginManager_EntityUpdate {
-	/**
-	 * Выполняется при обновлении версии
-	 */
-    private $aDumps = [
-        'prefix_sociality_social' => 'dump'
-    ];
+    /**
+     * Выполняется при обновлении версии
+     */   
 
 
     public function up() {  
-        /*
-         * Никто не устанавливал. Можно сносить таблицу
-         */
-        $this->removeTable('prefix_sociality');
         /*
          * Меняем ключ email
          */
         $this->exportSQL(Plugin::GetPath(__CLASS__).'update/2.0.0/dump_user.sql');
         
-        foreach($this->aDumps as $sTable => $sFile){
-            if(!$this->exportDump($sTable, $sFile)){
-                return false;
-            }
-        }
+        $this->exportSQL(Plugin::GetPath(__CLASS__).'update/2.0.0/dump_rename.sql');
         
 	return true;
     }
     
-    protected function exportDump($sTable, $sFile) {
-        if (!$this->isTableExists($sTable)) {
-            $sResult = $this->exportSQL(Plugin::GetPath(__CLASS__).'update/2.0.0/'.$sFile.'.sql');
-            $this->Logger_Notice(serialize($sResult));             
-        }
-        return true;
-    }
-    
-    protected function removeTable($sTable) {
-        if ($this->isTableExists($sTable)){
-            return $this->exportSQLQuery("DROP TABLE IF EXISTS $sTable");
-        }
-    }
-
     /**
      * Выполняется при откате версии
      */
     public function down() {
-        foreach($this->aDumps as $sTable => $sFile){
-            $aResult = $this->removeTable($sTable);
-            $this->Logger_Notice(serialize($aResult));
-        }
+         $this->exportSQL(Plugin::GetPath(__CLASS__).'update/2.0.0/dump_rename_down.sql');
     }
 }

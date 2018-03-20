@@ -18,7 +18,7 @@ return array(
             . ' Или продожить регистрацию под другим email'
         ],
         'profile' => [
-            
+            'attach_success' => "Привязка профиля %%provider%% удачна",
             'social_profile' => 'Социальный профиль',
             'cancel_profile' => 'Отменить',
             'reset_profile_notice' => 'Привязка профиля %%provider%% отменена',

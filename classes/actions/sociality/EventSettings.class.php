@@ -33,6 +33,8 @@ class PluginSociality_ActionSociality_EventSettings extends Event {
             $this->Message_AddError($sMess, '', true);
         }
         
+        $this->Message_AddError($this->Lang_Get('plugin.sociality.auth.profile.attach_success', $sProvider), '', true);
+        
         Router::LocationAction('settings');
     }
 }

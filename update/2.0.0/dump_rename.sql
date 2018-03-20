@@ -1,0 +1,1 @@
+RENAME TABLE `prefix_sociality` TO `prefix_sociality_social`;
