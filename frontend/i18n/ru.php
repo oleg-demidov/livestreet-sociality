@@ -5,6 +5,7 @@
 return array(
     'auth' => [
         'error' => [
+            'social_busy' => "Этот профиль соц сети уже занят",
             'no_provider_name' => 'Не передано имя провайдера',
             'no_access' => 'Не доступа к странице',
             'no_provider' => 'Провайдер %%name%% не найден',

@@ -42,6 +42,10 @@ class PluginSociality_ModuleSocial extends ModuleORM
     }
     
     public function CreateRelation($oProfileData, $sProvider, $iUserId) {
+        if($oSocial = $this->PluginSociality_Social_GetSocialByFilter(['social_id' => $oProfileData->identifier, 
+            'social_type' => $sProvider])){
+            return $this->Lang_Get('plugin.sociality.auth.error.social_busy');
+        }
         $oSocial = Engine::GetEntity('PluginSociality_Social_Social');
         $oSocial->setUserId( $iUserId );
         $oSocial->setProfileUrl( $oProfileData->profileURL );
@@ -52,6 +56,7 @@ class PluginSociality_ModuleSocial extends ModuleORM
         if($iFieldId = $this->User_userFieldExistsByName( strtolower($sProvider) ) and $oProfileData->profileURL){
             $this->User_setUserFieldsValues($iUserId, array($iFieldId[0]['id'] => $oProfileData->profileURL));
         }
+        return true;
     }
     
     public function GetGeoByData($oProfileData) {

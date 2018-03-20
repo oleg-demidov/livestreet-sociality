@@ -29,7 +29,9 @@ class PluginSociality_ActionSociality_EventSettings extends Event {
         /*
         * Привязка социальной сети
         */        
-        $this->PluginSociality_Social_CreateRelation($oProfileData, $sProvider, $oUser->getId());
+        if(($sMess = $this->PluginSociality_Social_CreateRelation($oProfileData, $sProvider, $oUser->getId())) !== true){
+            $this->Message_AddError($sMess, '', true);
+        }
         
         Router::LocationAction('settings');
     }
