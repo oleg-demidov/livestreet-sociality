@@ -34,6 +34,7 @@ $config['$config_scheme$'] = array(
         ),
     ),
     
+    
     'size' =>  array(
         'type'        => 'string',
         'name'        => 'Size buttons',
@@ -559,9 +560,9 @@ $config['$config_sections$'] = array(
     array(
         'name' => 'Order',
         'allowed_keys' => array(
-                'order',
-                'register_scenario',
-                'size'
+            'order',
+            'register_scenario',
+            'size'
         )
     ),
     

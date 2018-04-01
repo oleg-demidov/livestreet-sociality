@@ -3,7 +3,7 @@
 
 <style>
     .soc-profile-image{
-        width:150px;
+        width:120px;
     }
 </style>
 

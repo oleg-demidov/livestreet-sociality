@@ -52,7 +52,6 @@ class PluginSociality_ActionSociality_EventOAuth extends Event {
         $this->Session_Set('provider', $this->sCurrentEvent);
         $this->Session_Set('oUserProfile', $oUserProfile);        
        
-        $this->Session_Drop('authRedirect');        //print_r(json_decode($oSession));print_r($oUserProfile);
         
         Router::LocationAction( $sRedirect );
     }

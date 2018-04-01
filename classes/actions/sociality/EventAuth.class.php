@@ -15,24 +15,31 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
     }
 
     public function EventRegister() {
-        
-        Config::Set('general.reg.activation', false);
+        $sProvider =$this->GetParam(0);        
         
         if(Config::Get('plugin.sociality.register_scenario') == 'return_to_form'){
-            $this->Session_Set('authRedirect', 'auth/register');
+            
+            $sUrlRedirect = Config::Get('plugin.sociality.register_action');
+            
         }else{
             if (Config::Get('general.reg.invite')  and !$this->Session_Get('invite_code')) {
                 Router::LocationAction('auth/invite');
             }
-            $this->Session_Set('authRedirect', 'sociality/register_hard');
+            $sUrlRedirect = 'sociality/register_hard';
         }
         
-        Router::LocationAction('sociality/'. $this->GetParam(0).'/start');
+        $sUrl = 'sociality/'. $sProvider.'/start';
+        
+        $this->Hook_Run('sociality_register_begin', ['provider' => &$sProvider, 'sUrl' => &$sUrl, 'sUrlRedirect' => &$sUrlRedirect]);
+        
+        $this->Session_Set('authRedirect', $sUrlRedirect);
+        
+        Router::LocationAction($sUrl);
     }  
     
     
     public function EventRegisterHard() {  
-        
+                
         Config::Set('module.user.captcha_use_registration', false);
         
         $sProvider = $this->Session_Get('provider');
@@ -203,7 +210,7 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
                 Router::Location($oUser->getUserWebPath());
             }
         }
-        Router::LocationAction('auth/register');
+        Router::LocationAction(Config::Get('plugin.sociality.register_action'));
     } 
     
     public function EventResetProfile() {
@@ -214,7 +221,10 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
         
         $this->Message_AddNoticeSingle(
                 $this->Lang_Get('plugin.sociality.auth.profile.reset_profile_notice', ['provider' => $sProvider]),'',true);
-        Router::LocationAction('auth/register');
+        
+        $sUrlRedirect = $this->Session_Get('authRedirect')?$this->Session_Get('authRedirect'):Config::Get('plugin.sociality.register_action');
+        
+        Router::LocationAction($sUrlRedirect);
     }
     
     public function EventAttachWithEnter() {
