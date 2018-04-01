@@ -30,7 +30,10 @@ class PluginSociality_HookRegister extends Hook
         $oUser->setProfileCountry( $oProfileData->country );
         $oUser->setProfileRegion( $oProfileData->region );
         $oUser->setProfileCity( $oProfileData->city?$oProfileData->city:$oProfileData->home_town );
-        
+        /*
+         * Баг recaptcha
+         */
+        $oUser->setCaptcha(getRequestStr('captcha', getRequestStr('g-recaptcha-response')));
     }
     
     public function RegisterAfter($aParams) {
