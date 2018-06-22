@@ -19,7 +19,7 @@ class PluginSociality_Update_CreateTable extends ModulePluginManager_EntityUpdat
          */
         $this->exportSQL(Plugin::GetPath(__CLASS__).'update/2.0.0/dump_user.sql');
         
-        $this->exportSQL(Plugin::GetPath(__CLASS__).'update/2.0.0/dump_rename.sql');
+        $this->exportSQL(Plugin::GetPath(__CLASS__).'update/2.0.0/social.sql');
         
 	return true;
     }
@@ -28,6 +28,6 @@ class PluginSociality_Update_CreateTable extends ModulePluginManager_EntityUpdat
      * Выполняется при откате версии
      */
     public function down() {
-         $this->exportSQL(Plugin::GetPath(__CLASS__).'update/2.0.0/dump_rename_down.sql');
+         //$this->exportSQL(Plugin::GetPath(__CLASS__).'update/2.0.0/dump_rename_down.sql');
     }
 }
