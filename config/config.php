@@ -1,6 +1,7 @@
 <?php
 
-Config::Set('router.page.sociality', 'PluginSociality_ActionSociality');
+
+$config['$root$']['router']['page']['sociality'] = 'PluginSociality_ActionSociality';
 
 $config['order'] = 'Vkontakte,Odnoklassniki,Facebook,Twitter,Instagram,Mailru,Google,Yandex,GitHub,Steam,Yahoo,LinkedIn';
 

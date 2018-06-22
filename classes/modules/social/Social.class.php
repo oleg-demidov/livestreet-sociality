@@ -63,15 +63,15 @@ class PluginSociality_ModuleSocial extends ModuleORM
         
         if($oGeo = $this->Geo_GetCities(['name_ru_like' => $oProfileData->city?$oProfileData->city:$oProfileData->home_town], [], 1, 1) and 
                 $oGeo['count']){
-            return $oGeo['collection'][0];
+            return array_shift($oGeo['collection']);
         }
         
         if($oGeo = $this->Geo_GetRegions(['name_ru_like' => $oProfileData->region], [], 1, 1) and $oGeo['count']){
-            return $oGeo['collection'][0];
+            return array_shift($oGeo['collection']);
         }
         
         if($oGeo = $this->Geo_GetCountries(['name_ru_like' => $oProfileData->country], [], 1, 1) and $oGeo['count']){
-            return $oGeo['collection'][0];
+            return array_shift($oGeo['collection']);
         }
         return null;
     }
