@@ -58,7 +58,7 @@ $config['$config_scheme$'] = array(
      */
     'ha.providers.Yandex.enabled'     => array(
         'type'        => 'boolean',
-        'name'        => 'off/on',
+        'name'        => 'включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -67,7 +67,7 @@ $config['$config_scheme$'] = array(
     ),
     'ha.providers.Yandex.keys.id'       => array(
         'type'        => 'string',
-        'name'        => 'Key application',
+        'name'        => 'ID',
         'description' => '',
         'validator'   => array(
             'type'   => 'String',
@@ -80,7 +80,7 @@ $config['$config_scheme$'] = array(
     ),
     'ha.providers.Yandex.keys.secret'       => array(
         'type'        => 'string',
-        'name'        => 'Secret key application',
+        'name'        => 'Пароль',
         'description' => 'Redirect url: '.$sPathRedirect.'Yandex/end?hauth.done=Yandex',
         'validator'   => array(
             'type'   => 'String',
@@ -97,7 +97,7 @@ $config['$config_scheme$'] = array(
      */
     'ha.providers.Yahoo.enabled'     => array(
         'type'        => 'boolean',
-        'name'        => 'off/on',
+        'name'        => 'включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -137,7 +137,7 @@ $config['$config_scheme$'] = array(
      */
      'ha.providers.Google.enabled'     => array(
         'type'        => 'boolean',
-        'name'        => 'off/on',
+        'name'        => 'включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -146,7 +146,7 @@ $config['$config_scheme$'] = array(
     ),
     'ha.providers.Google.keys.id'       => array(
         'type'        => 'string',
-        'name'        => 'Key application',
+        'name'        => 'Id',
         'description' => '',
         'validator'   => array(
             'type'   => 'String',
@@ -159,8 +159,8 @@ $config['$config_scheme$'] = array(
     ),
     'ha.providers.Google.keys.secret'       => array(
         'type'        => 'string',
-        'name'        => 'Secret key application',
-        'description' => '',
+        'name'        => 'Secret',
+        'description' => 'Redirect url: '.$sPathRedirect.'/Google/end',
         'validator'   => array(
             'type'   => 'String',
             'params' => array(
@@ -177,7 +177,7 @@ $config['$config_scheme$'] = array(
     
     'ha.providers.Facebook.enabled'     => array(
         'type'        => 'boolean',
-        'name'        => 'off/on',
+        'name'        => 'включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -186,7 +186,7 @@ $config['$config_scheme$'] = array(
     ),    
     'ha.providers.Facebook.trustForwarded'     => array(
         'type'        => 'boolean',
-        'name'        => 'trustForwarded off/on',
+        'name'        => 'trustForwarded включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -225,7 +225,7 @@ $config['$config_scheme$'] = array(
      */
     'ha.providers.Vkontakte.enabled'     => array(
         'type'        => 'boolean',
-        'name'        => 'off/on',
+        'name'        => 'включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -234,7 +234,7 @@ $config['$config_scheme$'] = array(
     ),
     'ha.providers.Vkontakte.keys.id'       => array(
         'type'        => 'string',
-        'name'        => 'Key application',
+        'name'        => 'ID приложения',
         'description' => 'Redirect url: '.$sPathRedirect.'/Vkontakte/end',
         'validator'   => array(
             'type'   => 'String',
@@ -247,7 +247,7 @@ $config['$config_scheme$'] = array(
     ),
     'ha.providers.Vkontakte.keys.secret'       => array(
         'type'        => 'string',
-        'name'        => 'Secret key application',
+        'name'        => 'Защищённый ключ',
         'description' => '',
         'validator'   => array(
             'type'   => 'String',
@@ -264,7 +264,7 @@ $config['$config_scheme$'] = array(
      */
     'ha.providers.Twitter.enabled'     => array(
         'type'        => 'boolean',
-        'name'        => 'off/on',
+        'name'        => 'включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -273,7 +273,7 @@ $config['$config_scheme$'] = array(
     ),
     'ha.providers.Twitter.includeEmail'     => array(
         'type'        => 'boolean',
-        'name'        => 'includeEmail off/on',
+        'name'        => 'includeEmail включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -312,7 +312,7 @@ $config['$config_scheme$'] = array(
      */
     'ha.providers.LinkedIn.enabled'     => array(
         'type'        => 'boolean',
-        'name'        => 'off/on',
+        'name'        => 'включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -351,7 +351,7 @@ $config['$config_scheme$'] = array(
      */
     'ha.providers.GitHub.enabled'     => array(
         'type'        => 'boolean',
-        'name'        => 'off/on',
+        'name'        => 'включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -390,7 +390,7 @@ $config['$config_scheme$'] = array(
      */
     'ha.providers.Instagram.enabled'     => array(
         'type'        => 'boolean',
-        'name'        => 'off/on',
+        'name'        => 'включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -429,7 +429,7 @@ $config['$config_scheme$'] = array(
      */
     'ha.providers.Mailru.enabled'     => array(
         'type'        => 'boolean',
-        'name'        => 'off/on',
+        'name'        => 'включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -451,7 +451,7 @@ $config['$config_scheme$'] = array(
     ),
     'ha.providers.Mailru.keys.secret'       => array(
         'type'        => 'string',
-        'name'        => 'Secret key application',
+        'name'        => 'Приватный ключ',
         'description' => 'Redirect url: '.$sPathRedirect.'/Mailru/end',
         'validator'   => array(
             'type'   => 'String',
@@ -468,7 +468,7 @@ $config['$config_scheme$'] = array(
      */
     'ha.providers.Odnoklassniki.enabled'     => array(
         'type'        => 'boolean',
-        'name'        => 'off/on',
+        'name'        => 'включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -520,7 +520,7 @@ $config['$config_scheme$'] = array(
      */
     'ha.providers.Steam.enabled'     => array(
         'type'        => 'boolean',
-        'name'        => 'off/on',
+        'name'        => 'включить',
         'description' => '',
         'validator'   => array(
             'type'   => 'Boolean',
@@ -571,7 +571,7 @@ $config['$config_sections$'] = array(
         /**
          * Название раздела
          */
-        'name' => 'Yandex',
+        'name' => 'Yandex <a href="https://oauth.yandex.ru/client/new">Создать приложение</a>',
         /**
          * Список параметров для отображения в разделе
          */
@@ -588,7 +588,7 @@ $config['$config_sections$'] = array(
         ),*/
     ),
     array(
-        'name' => 'Yahoo',
+        'name' => 'Yahoo <a href="https://developer.yahoo.com/oauth/">Создать приложение</a>',
         'allowed_keys' => array(
                 'ha.providers.Yahoo.enabled',
                 'ha.providers.Yahoo.keys.key',
@@ -596,7 +596,7 @@ $config['$config_sections$'] = array(
         )
     ),
     array(
-        'name' => 'Google',
+        'name' => 'Google <a href="https://console.developers.google.com">Создать приложение</a>',
         'allowed_keys' => array(
                 'ha.providers.Google.enabled',
                 'ha.providers.Google.keys.id',
@@ -604,7 +604,7 @@ $config['$config_sections$'] = array(
         )
     ),
     array(
-        'name' => 'Facebook',
+        'name' => 'Facebook <a href="https://developers.facebook.com/apps/">Создать приложение</a>',
         'allowed_keys' => array(
                 'ha.providers.Facebook.enabled',
                 'ha.providers.Facebook.keys.id',
@@ -612,7 +612,7 @@ $config['$config_sections$'] = array(
         )
     ),
     array(
-        'name' => 'Vkontakte',
+        'name' => 'Vkontakte <a href="https://vk.com/apps?act=manage">Создать приложение</a>',
         'allowed_keys' => array(
                 'ha.providers.Vkontakte.enabled',
                 'ha.providers.Vkontakte.keys.id',
@@ -620,7 +620,7 @@ $config['$config_sections$'] = array(
         )
     ),
     array(
-        'name' => 'Twitter',
+        'name' => 'Twitter <a href="https://apps.twitter.com/">Создать приложение</a>',
         'allowed_keys' => array(
                 'ha.providers.Twitter.enabled',
                 'ha.providers.Twitter.keys.key',
@@ -628,7 +628,7 @@ $config['$config_sections$'] = array(
         )
     ),
     array(
-        'name' => 'LinkedIn',
+        'name' => 'LinkedIn <a href="https://developer.linkedin.com/my-apps">Создать приложение</a>',
         'allowed_keys' => array(
                 'ha.providers.LinkedIn.enabled',
                 'ha.providers.LinkedIn.keys.key',
@@ -636,7 +636,7 @@ $config['$config_sections$'] = array(
         )
     ),
     array(
-        'name' => 'GitHub',
+        'name' => 'GitHub  <a href="https://github.com/settings/applications/new">Создать приложение</a>',
         'allowed_keys' => array(
                 'ha.providers.GitHub.enabled',
                 'ha.providers.GitHub.keys.id',
@@ -644,7 +644,7 @@ $config['$config_sections$'] = array(
         )
     ),
     array(
-        'name' => 'Instagram',
+        'name' => 'Instagram <a href="https://www.instagram.com/developer/register/">Создать приложение</a>',
         'allowed_keys' => array(
                 'ha.providers.Instagram.enabled',
                 'ha.providers.Instagram.keys.id',
@@ -652,7 +652,7 @@ $config['$config_sections$'] = array(
         )
     ),
     array(
-        'name' => 'Mailru',
+        'name' => 'Mailru <a href="https://api.mail.ru/apps/">Создать приложение</a>',
         'allowed_keys' => array(
                 'ha.providers.Mailru.enabled',
                 'ha.providers.Mailru.keys.id',
@@ -661,7 +661,7 @@ $config['$config_sections$'] = array(
     ),
     
     array(
-        'name' => 'Odnoklassniki',
+        'name' => 'Odnoklassniki  <a href="https://apiok.ru/dev/app/create">Создать приложение</a>',
         'allowed_keys' => array(
             'ha.providers.Odnoklassniki.enabled',
             'ha.providers.Odnoklassniki.keys.id',
@@ -670,7 +670,7 @@ $config['$config_sections$'] = array(
         )
     ),
     array(
-        'name' => 'Steam',
+        'name' => 'Steam <a href="https://steamcommunity.com/dev/apikey">Создать приложение</a>',
         'allowed_keys' => array(
                 'ha.providers.Steam.enabled',
                 'ha.providers.Steam.keys.id',
