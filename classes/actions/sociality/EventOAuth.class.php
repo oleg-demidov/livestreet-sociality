@@ -7,6 +7,8 @@
  * @author oleg
  */
 
+use Hybridauth\Hybridauth;
+
 class PluginSociality_ActionSociality_EventOAuth extends Event {
     
     public function Init()
@@ -32,7 +34,7 @@ class PluginSociality_ActionSociality_EventOAuth extends Event {
         $oUserProfile = null;
         try{
             
-            $hybridauth = new Hybrid_Auth( $providers );
+            $hybridauth = new Hybridauth( $providers );
 
             $оProvider = $hybridauth->authenticate( $this->sCurrentEvent );
             
@@ -42,7 +44,12 @@ class PluginSociality_ActionSociality_EventOAuth extends Event {
 
         }
         catch( Exception $e ){
-            return Router::ActionError('', $this->Lang_Get('plugin.sociality.auth.error.ha_auth_stop', ['name' => $this->sCurrentEvent]));
+            return Router::ActionError(
+                $e -> getMessage(), 
+                $this->Lang_Get(
+                    'plugin.sociality.auth.error.ha_auth_stop', 
+                    ['name' => $this->sCurrentEvent])
+            );
         }
 
         if(!is_object($oUserProfile)){            

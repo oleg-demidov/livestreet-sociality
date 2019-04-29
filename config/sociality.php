@@ -63,7 +63,7 @@ $config['ha'] = [
     // - "info" To log info and error messages (ignore debug messages)
     "debug_mode" => false,
     // Path to file writable by the web server. Required if 'debug_mode' is not false
-    "debug_file" => Config::Get('path.root.server')."/application/tmp/log_sociality.txt",
+    "debug_file" => Config::Get('path.root.server')."/application/logs/log_sociality.txt",
 
 ];
 
