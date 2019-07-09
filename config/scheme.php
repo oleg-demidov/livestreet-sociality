@@ -51,7 +51,22 @@ $config['$config_scheme$'] = array(
         ),
     ),
     
-    
+    'ha.debug_mode'     => array(
+        'type'        => 'string',
+        'name'        => 'Debug',
+        'description' => '/application/logs/log_sociality.log',
+        'validator'   => array(
+            'type'   => 'Enum',
+            'params' => array(
+                'enum'       => array(
+                    'error',
+                    'info',
+                ),
+                'allowEmpty' => false,
+            ),
+        )
+        
+    ),
     
     /*
      * Yandex
@@ -562,7 +577,8 @@ $config['$config_sections$'] = array(
         'allowed_keys' => array(
             'order',
             'register_scenario',
-            'size'
+            'size',
+            'ha.debug_mode'
         )
     ),
     

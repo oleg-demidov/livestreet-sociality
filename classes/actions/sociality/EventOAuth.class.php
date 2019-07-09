@@ -23,18 +23,20 @@ class PluginSociality_ActionSociality_EventOAuth extends Event {
             return Router::ActionError('', $this->Lang_Get('plugin.sociality.auth.error.no_access') );
         }
         
-        $providers = Config::Get('plugin.sociality.ha');
+        $config = Config::Get('plugin.sociality.ha');
         
-        if( !isset($providers['providers'][$this->sCurrentEvent]) ){
+        if( !isset($config['providers'][$this->sCurrentEvent]) ){
             return Router::ActionError('', $this->Lang_Get('plugin.sociality.auth.error.no_provider', ['name' => $this->sCurrentEvent]));                
         }
         
-        $providers['base_url'] = Config::Get('path.root.web') . '/sociality/' . $this->sCurrentEvent. '/end';
+        $config['base_url'] = Config::Get('path.root.web') . '/sociality/' . $this->sCurrentEvent. '/end';
+        
+//        $this->Logger_Notice(print_r($config,true));
         
         $oUserProfile = null;
         try{
             
-            $hybridauth = new Hybridauth( $providers );
+            $hybridauth = new Hybridauth( $config );
 
             $оProvider = $hybridauth->authenticate( $this->sCurrentEvent );
             
