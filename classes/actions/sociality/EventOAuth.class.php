@@ -29,10 +29,8 @@ class PluginSociality_ActionSociality_EventOAuth extends Event {
             return Router::ActionError('', $this->Lang_Get('plugin.sociality.auth.error.no_provider', ['name' => $this->sCurrentEvent]));                
         }
         
-        $config['base_url'] = Config::Get('path.root.web') . '/sociality/' . $this->sCurrentEvent. '/end';
-        
-//        $this->Logger_Notice(print_r($config,true));
-        
+        $config['callback'] = Config::Get('path.root.web') . '/sociality/' . $this->sCurrentEvent. '/start';
+                
         $oUserProfile = null;
         try{
             
@@ -47,7 +45,7 @@ class PluginSociality_ActionSociality_EventOAuth extends Event {
         }
         catch( Exception $e ){
             return Router::ActionError(
-                $e -> getMessage(), 
+                $e -> getMessage(). get_class($e), 
                 $this->Lang_Get(
                     'plugin.sociality.auth.error.ha_auth_stop', 
                     ['name' => $this->sCurrentEvent])
