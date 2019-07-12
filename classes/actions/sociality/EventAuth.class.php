@@ -48,41 +48,23 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
             return Router::ActionError($this->Lang_Get('plugin.sociality.auth.error.ha_no_data', ['name' => $sProvider]));
         }       
         
+        
         /*
-         * TODO Не работает выход если вход выполнен через регистрацию
+         * Проверяем на существование email. Если есть, берем его
          */
-        if($oSocial = $this->PluginSociality_Social_GetSocialByFilter(['social_id' => $oProfileData->identifier, 
-                        'social_type' => $sProvider])){
-            if($oUser = $oSocial->getUser()){
-                $this->Session_Drop('oUserProfile');
-                $this->Session_Drop('provider');
-            
-                $this->User_Authorization($oUser, false);
-                Router::Location($oUser->getUserWebPath());
-            }
-            $oSocial->Delete();
-        }
-        /**
-         * Создаем объект пользователя
-         */
-        $oUser = Engine::GetEntity('ModuleUser_EntityUser');
-        /*
-         * Проверяем на существование email. Если есть, выполняем вход
-         */
-        if( $oUser->ValidateMailExists($oProfileData->email, []) !== true ) {
-            $oUser = $this->User_GetUserByMail($oProfileData->email);
-            
-            if(!$oSocial = $this->PluginSociality_Social_GetSocialByFilter(['user_id' => $oUser->getId(), 'social_type' => $sProvider])){
-                return Router::ActionError($this->Lang_Get('plugin.sociality.auth.error.email_exists_desc', 
-                        ['provider' => $sProvider, 'email' => $oProfileData->email]), 
-                    $this->Lang_Get('plugin.sociality.auth.error.email_exists', ['email' => $oProfileData->email]));
-            }
-            
-            $this->Session_Drop('oUserProfile');
-            $this->Session_Drop('provider');
-            
-            $this->User_Authorization($oUser, false);
-            Router::Location($oUser->getUserWebPath());
+        if( !$oUser = $this->User_GetUserByMail($oProfileData->email)) {
+            /**
+            * Создаем объект пользователя
+            */
+            $oUser = Engine::GetEntity('ModuleUser_EntityUser');
+            $oUser->setRole('user');
+            $oUser->setLogin( $this->PluginSociality_Social_GetLoginFromProfileData($oProfileData) );
+            $oUser->setMail( $oProfileData->email );
+            $oUser->setPassword($sPass = func_generator(10) );
+            $oUser->setPasswordConfirm( $sPass );
+            $oUser->setDateCreate(date("Y-m-d H:i:s"));
+            $oUser->setIpCreate(func_getIp());
+            $oUser->setName( $oProfileData->firstName . ' ' . $oProfileData->lastName );
         }     
         
         /**
@@ -93,19 +75,7 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
          * Заполняем поля (данные)
          */        
         $sPass = rand(100000,10000000);
-        $oUser->setLogin( $this->PluginSociality_Social_GetLoginFromProfileData($oProfileData) );
-        $oUser->setMail( $oProfileData->email );
-        $oUser->setPassword( $sPass );
-        $oUser->setPasswordConfirm( $sPass );
-        $oUser->setDateRegister(date("Y-m-d H:i:s"));
-        $oUser->setIpRegister(func_getIp());
         
-        $oUser->setProfileSex($this->PluginSociality_Social_GetGender($oProfileData));
-        $oUser->setProfileBirthday($this->PluginSociality_Social_GetBirthdayDatetime($oProfileData));
-        $oUser->setProfileName( $oProfileData->firstName . ' ' . $oProfileData->lastName );
-        $oUser->setProfileCountry( $oProfileData->country );
-        $oUser->setProfileRegion( $oProfileData->region );
-        $oUser->setProfileCity( $oProfileData->city?$oProfileData->city:$oProfileData->home_town );
         /**
          * Не используется активация
          */
@@ -117,12 +87,9 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
          */
         if ($oUser->_Validate()) {
             $oUser->setPassword($this->User_MakeHashPassword($oUser->getPassword()));
-            if ($this->User_Add($oUser)) {
+            if ($oUser->Save()) {
                 
-                /**
-                 * Подписываем пользователя на дефолтные события в ленте активности
-                 */
-                $this->Stream_switchUserEventDefaultTypes($oUser->getId());
+                
                 /**
                  * Если юзер зарегистрировался по приглашению то обновляем инвайт
                  */
@@ -134,42 +101,19 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
                 * Установка фото
                 */
                 
-                if($sPathPhoto = $this->PluginSociality_Social_GetPhotoByData($oProfileData)){
-
-                    if($this->User_CreateProfilePhoto($sPathPhoto, $oUser)){
-
-                        $this->User_CreateProfileAvatar($oUser->getProfileFoto(), $oUser);
-                    }
-
-                    $this->Fs_RemoveFileLocal($sPathPhoto);
-
-                }
-                /*
-                 * Попытка привязать местоположение
-                 */
-                if($oGeo = $this->PluginSociality_Social_GetGeoByData($oProfileData)){
-                    $this->Geo_CreateTarget($oGeo, 'user', $oUser->getId());
-                }                
+                
+                            
                 /*
                  * Привязка социальной сети
                  */
                 $this->PluginSociality_Social_CreateRelation($oProfileData, $sProvider, $oUser->getId());
-                /*
-                 * Отправляем пароль на email
-                 */
-                $this->User_SendNotifyRegistration($oUser, $sPass);
-                $oUser = $this->User_GetUserById($oUser->getId());
+                
                 /**
                  * Сразу авторизуем
                  */
                 $this->User_Authorization($oUser, false);
                 $this->Session_Drop('invite_code');
-                /**
-                 * Определяем URL для редиректа после авторизации
-                 */
-                $sUrl = Config::Get('module.user.redirect_after_registration');
-                $this->Message_AddNoticeSingle($this->Lang_Get('auth.registration.notices.success'),'',true);
-                
+                                
                 $this->Session_Drop('oUserProfile');
                 $this->Session_Drop('provider');
                 
@@ -206,11 +150,22 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
                 $this->Session_Drop('oUserProfile');
                 $this->Session_Drop('provider');
                 
-                $this->User_Authorization($oUser, false);
-                Router::Location($oUser->getUserWebPath());
+                $this->User_Authorization($oUser, false);  
+                Router::Location($oUser->getUrl());
             }
         }
-        Router::LocationAction(Config::Get('plugin.sociality.register_action'));
+        
+        if(Config::Get('plugin.sociality.register_scenario') == 'return_to_form'){
+            
+            $sUrlRedirect = Config::Get('plugin.sociality.register_action');
+            
+        }else{
+            if (Config::Get('general.reg.invite')  and !$this->Session_Get('invite_code')) {
+                Router::LocationAction('auth/invite');
+            }
+            $sUrlRedirect = 'sociality/register_hard';
+        }
+        Router::LocationAction($sUrlRedirect);
     } 
     
     public function EventResetProfile() {

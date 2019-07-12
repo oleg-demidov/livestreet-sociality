@@ -38,8 +38,6 @@ class PluginSociality_ActionSociality_EventOAuth extends Event {
 
             $оProvider = $hybridauth->authenticate( $this->sCurrentEvent );
             
-            $oSession = $hybridauth->getSessionData( );
-
             $oUserProfile = $оProvider->getUserProfile();
 
         }
@@ -59,7 +57,6 @@ class PluginSociality_ActionSociality_EventOAuth extends Event {
         $this->Session_Set('provider', $this->sCurrentEvent);
         $this->Session_Set('oUserProfile', $oUserProfile);        
        
-        
         Router::LocationAction( $sRedirect );
     }
     

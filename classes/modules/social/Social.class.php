@@ -18,11 +18,6 @@ class PluginSociality_ModuleSocial extends ModuleORM
             }
         }
         
-        if( $oProfileData->domain ){
-            if($oUser->ValidateLoginExists($oProfileData->domain, []) === true){
-                return $oProfileData->domain;
-            }
-        }
         
         if( $oProfileData->email ){
             $sEmailLogin= substr($oProfileData->email, 0, stripos( $oProfileData->email , '@'));
@@ -53,27 +48,7 @@ class PluginSociality_ModuleSocial extends ModuleORM
         $oSocial->setSocialType( $sProvider );
         $oSocial->Save();
         
-        if($iFieldId = $this->User_userFieldExistsByName( strtolower($sProvider) ) and $oProfileData->profileURL){
-            $this->User_setUserFieldsValues($iUserId, array($iFieldId[0]['id'] => $oProfileData->profileURL));
-        }
         return true;
-    }
-    
-    public function GetGeoByData($oProfileData) {
-        
-        if($oGeo = $this->Geo_GetCities(['name_ru_like' => $oProfileData->city?$oProfileData->city:$oProfileData->home_town], [], 1, 1) and 
-                $oGeo['count']){
-            return array_shift($oGeo['collection']);
-        }
-        
-        if($oGeo = $this->Geo_GetRegions(['name_ru_like' => $oProfileData->region], [], 1, 1) and $oGeo['count']){
-            return array_shift($oGeo['collection']);
-        }
-        
-        if($oGeo = $this->Geo_GetCountries(['name_ru_like' => $oProfileData->country], [], 1, 1) and $oGeo['count']){
-            return array_shift($oGeo['collection']);
-        }
-        return null;
     }
     
     public function GetPhotoFromProfileData($oProfileData) {
@@ -89,73 +64,6 @@ class PluginSociality_ModuleSocial extends ModuleORM
         return $oProfileData->photo_rec;
     }
     
-    public function GetGender($oProfileData) {
-        $aTransGender = [
-            'male' => 'man',
-            'female' => 'woman'
-        ];
-                
-        if( !in_array( $oProfileData->gender, array_keys($aTransGender) ) ){
-            return 'other';
-        }
-        
-        return $aTransGender[$oProfileData->gender];
-    }
-    
-    public function GetBirthdayDatetime($oProfileData) {
-        if(!$oProfileData->bdate){
-            return null;
-        }
-        
-        $date = DateTime::createFromFormat('j.m.Y', $oProfileData->bdate);
-        return $date->format("Y-m-d H:i:s");
-    }
-    
-    public function GetPhotoByData($oProfileData) {
-        $sUrl = $this->GetPhotoFromProfileData($oProfileData);    
-        return $this->GetPhotoByUrl($sUrl);
-    }
-    
-    /*
-     * Скачивание файла
-     */
-    public function GetPhotoByUrl($sUrl) {
-        
-        $sFileTmp = Config::Get('sys.cache.dir') .'image/'. func_generator();
-        if(!file_exists(Config::Get('sys.cache.dir') .'image/')){
-            mkdir ( Config::Get('sys.cache.dir') .'image/' ,  0777 , true  );
-        }
-        if(!$oCurl = curl_init($sUrl)){
-            $this->Message_AddError('Avatar error curl');
-            return null;
-        }
-        if(!$fPhoto = fopen($sFileTmp, 'wb')){
-            $this->Message_AddError('Avatar error open');
-            return null;
-        }
-        curl_setopt($oCurl, CURLOPT_HEADER, 0);
-        curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);  
-        curl_setopt($oCurl, CURLOPT_BINARYTRANSFER,1);
-        curl_setopt($oCurl, CURLOPT_FILE, $fPhoto);
-        curl_setopt($oCurl, CURLOPT_HEADER, 0);
-        curl_setopt($oCurl, CURLOPT_URL, $sUrl);
-	 
-	//имитируем браузер опера
-	curl_setopt($oCurl, CURLOPT_USERAGENT, 'Opera/9.80 (Windows NT 5.1; U; ru) Presto/2.7.62 Version/11.01');
-	 
-        curl_exec($oCurl);
-        curl_close($oCurl);
-        fclose($fPhoto);
-        
-        /*
-         * Если не получилось curl
-         */
-        if(!filesize($sFileTmp)){
-            file_put_contents($sFileTmp, file_get_contents($sUrl));
-        }
-
-        return $sFileTmp;
-    }
     
     public function GetButsRegister() {
         $aButs = $this->GetButsEnable('register');
