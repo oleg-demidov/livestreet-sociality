@@ -56,7 +56,7 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
             /**
             * Создаем объект пользователя
             */
-            $oUser = Engine::GetEntity('ModuleUser_EntityUser');
+            $oUser = Engine::GetEntity(ModuleUser_EntityUser::class);
             $oUser->setRole('user');
             $oUser->setLogin( $this->PluginSociality_Social_GetLoginFromProfileData($oProfileData) );
             $oUser->setMail( $oProfileData->email );
@@ -100,8 +100,7 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
                 /*
                 * Установка фото
                 */
-                
-                
+                $this->AddPhoto($oProfileData->photoURL);
                             
                 /*
                  * Привязка социальной сети
@@ -131,6 +130,44 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
         }
     }
     
+    protected function AddPhoto($sUrl) {
+        $oUploadUrl = Engine::GetEntity(PluginMedia_ModuleMedia_EntityUploadUrl::class, [
+            'url' => $sUrl
+        ]);
+
+        if(!$oUploadUrl->_Validate()){
+            return false;
+        }
+        
+        $oMedia = Engine::GetEntity('PluginMedia_Media_Media', $oUploadUrl->_getData());
+        $oMedia->setUserId($oUser->getId());
+
+        if(!$oMedia->_Validate()){
+            return false;
+        }
+        
+        $oMedia->Save();
+        
+        if(!$aSize = getimagesize($oMedia->getPath())){
+            return false;
+        }
+        $mResult = $this->PluginMedia_Media_GenerateImageBySizes(
+            $sPath, 
+            dirname($this->Fs_GetPathRelativeFromServer($sPath)), 
+            basename(preg_replace('/\\.[^.\\s]{3,4}$/', '', $sPath)), 
+            Config::Get('plugin.media.avatar.sizes')
+        );
+        $this->PluginMedia_Media_GenerateImageBySizes(
+            $oMedia->getPath(), 
+            $sDirDist, 
+            $sFileName, 
+            ['w' => $aSize[0], 'h' => null, 'crop' => true]
+        );
+        
+        $oUser->setUseravatar($oMedia->getId());
+    }
+
+
     public function EventLogin()
     {
         if(!$oProfileData = $this->Session_Get('oUserProfile')){
