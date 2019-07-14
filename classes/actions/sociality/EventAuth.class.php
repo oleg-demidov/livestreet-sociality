@@ -56,16 +56,30 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
             /**
             * Создаем объект пользователя
             */
-            $oUser = Engine::GetEntity(ModuleUser_EntityUser::class);
-            $oUser->setRole('user');
-            $oUser->setLogin( $this->PluginSociality_Social_GetLoginFromProfileData($oProfileData) );
-            $oUser->setMail( $oProfileData->email );
-            $oUser->setPassword($sPass = func_generator(10) );
-            $oUser->setPasswordConfirm( $sPass );
-            $oUser->setDateCreate(date("Y-m-d H:i:s"));
-            $oUser->setIpCreate(func_getIp());
-            $oUser->setName( $oProfileData->firstName . ' ' . $oProfileData->lastName );
+            $oUser = $this->AddUser($oProfileData);
+            if(is_string($oUser)){
+                return Router::ActionError($oUser);
+            }
         }     
+        /*
+        * Установка фото
+        */
+        $oUser->avatar->setByUrl($oProfileData->photoURL);
+
+        /*
+         * Привязка социальной сети
+         */
+        $this->PluginSociality_Social_CreateRelation($oProfileData, $sProvider, $oUser->getId());
+        /**
+        * Сразу авторизуем
+        */
+        $this->User_Authorization($oUser, false);
+        $this->Session_Drop('invite_code');
+
+        $this->Session_Drop('oUserProfile');
+        $this->Session_Drop('provider');
+        
+        Router::Location($oUser->getUrl());
         
         /**
          * Устанавливаем сценарий валидации
@@ -81,90 +95,48 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
          */
         $oUser->setActivate(1);
         $oUser->setActivateKey(null);
-            
+        
+    }
+    
+    protected function AddUser($oProfileData) {
+        $oUser = Engine::GetEntity(ModuleUser_EntityUser::class);
+        $oUser->setRole('user');
+        $oUser->setLogin( $this->PluginSociality_Social_GetLoginFromProfileData($oProfileData) );
+        $oUser->setMail( $oProfileData->email );
+        $oUser->setPassword($sPass = func_generator(10) );
+        $oUser->setPasswordConfirm( $sPass );
+        $oUser->setDateCreate(date("Y-m-d H:i:s"));
+        $oUser->setIpCreate(func_getIp());
+        $oUser->setName( $oProfileData->firstName . ' ' . $oProfileData->lastName );
+        /**
+         * Не используется активация
+         */
+        $oUser->setActivate(1);
+        $oUser->setActivateKey(null);
+        /**
+         * Устанавливаем сценарий валидации
+         */        
+        $oUser->_setValidateScenario('registration');
+        
         /**
          * Запускаем валидацию
          */
-        if ($oUser->_Validate()) {
-            $oUser->setPassword($this->User_MakeHashPassword($oUser->getPassword()));
-            if ($oUser->Save()) {
-                
-                
-                /**
-                 * Если юзер зарегистрировался по приглашению то обновляем инвайт
-                 */
-                if ($sCode = $this->Session_Get('invite_code')) {
-                    $this->Invite_UseCode($sCode, $oUser);
-                }
-                
-                /*
-                * Установка фото
-                */
-                $this->AddPhoto($oProfileData->photoURL);
-                            
-                /*
-                 * Привязка социальной сети
-                 */
-                $this->PluginSociality_Social_CreateRelation($oProfileData, $sProvider, $oUser->getId());
-                
-                /**
-                 * Сразу авторизуем
-                 */
-                $this->User_Authorization($oUser, false);
-                $this->Session_Drop('invite_code');
-                                
-                $this->Session_Drop('oUserProfile');
-                $this->Session_Drop('provider');
-                
-                Router::Location($oUser->getUserWebPath());
-                
-            } else {
-                return Router::ActionError($this->Lang_Get('common.error.system.base'));
-            }
-        } else {
-            /**
-             * Получаем ошибки
-             */
-            $aErrors = $oUser->_getValidateErrors();
-            return Router::ActionError(serialize($aErrors));
+        if (!$oUser->_Validate()) {
+            return  $oUser->_getValidateError();
         }
-    }
-    
-    protected function AddPhoto($sUrl) {
-        $oUploadUrl = Engine::GetEntity(PluginMedia_ModuleMedia_EntityUploadUrl::class, [
-            'url' => $sUrl
-        ]);
-
-        if(!$oUploadUrl->_Validate()){
-            return false;
+            
+        $oUser->setPassword($this->User_MakeHashPassword($oUser->getPassword()));
+        
+        $oUser->Save();
+        
+        /**
+        * Если юзер зарегистрировался по приглашению то обновляем инвайт
+        */
+        if ($sCode = $this->Session_Get('invite_code')) {
+            $this->Invite_UseCode($sCode, $oUser);
         }
         
-        $oMedia = Engine::GetEntity('PluginMedia_Media_Media', $oUploadUrl->_getData());
-        $oMedia->setUserId($oUser->getId());
-
-        if(!$oMedia->_Validate()){
-            return false;
-        }
-        
-        $oMedia->Save();
-        
-        if(!$aSize = getimagesize($oMedia->getPath())){
-            return false;
-        }
-        $mResult = $this->PluginMedia_Media_GenerateImageBySizes(
-            $sPath, 
-            dirname($this->Fs_GetPathRelativeFromServer($sPath)), 
-            basename(preg_replace('/\\.[^.\\s]{3,4}$/', '', $sPath)), 
-            Config::Get('plugin.media.avatar.sizes')
-        );
-        $this->PluginMedia_Media_GenerateImageBySizes(
-            $oMedia->getPath(), 
-            $sDirDist, 
-            $sFileName, 
-            ['w' => $aSize[0], 'h' => null, 'crop' => true]
-        );
-        
-        $oUser->setUseravatar($oMedia->getId());
+        return $oUser;
     }
 
 
