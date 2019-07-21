@@ -61,15 +61,22 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
                 return Router::ActionError($oUser);
             }
         }     
+        
         /*
         * Установка фото
         */
-        $oUser->avatar->setByUrl($oProfileData->photoURL);
+        if (!$oUser->avatar->getMedia()) {
+           $oUser->avatar->setByUrl($oProfileData->photoURL);
+        }
+        
 
         /*
          * Привязка социальной сети
          */
         $this->PluginSociality_Social_CreateRelation($oProfileData, $sProvider, $oUser->getId());
+        
+        $this->Hook_Run('sociality_create_relation', 
+                ['oUser' => $oUser, 'oProfileData' => $oProfileData, 'provider' => $sProvider]);
         /**
         * Сразу авторизуем
         */
@@ -81,20 +88,7 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
         
         Router::Location($oUser->getUrl());
         
-        /**
-         * Устанавливаем сценарий валидации
-         */        
-        $oUser->_setValidateScenario('registration');
-        /**
-         * Заполняем поля (данные)
-         */        
-        $sPass = rand(100000,10000000);
         
-        /**
-         * Не используется активация
-         */
-        $oUser->setActivate(1);
-        $oUser->setActivateKey(null);
         
     }
     
@@ -116,7 +110,7 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
         /**
          * Устанавливаем сценарий валидации
          */        
-        $oUser->_setValidateScenario('registration');
+        $oUser->_setValidateScenario('add');
         
         /**
          * Запускаем валидацию
@@ -126,8 +120,8 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
         }
             
         $oUser->setPassword($this->User_MakeHashPassword($oUser->getPassword()));
-        
-        $oUser->Save();
+                
+        $oUser->Add();
         
         /**
         * Если юзер зарегистрировался по приглашению то обновляем инвайт
@@ -136,7 +130,7 @@ class PluginSociality_ActionSociality_EventAuth extends Event {
             $this->Invite_UseCode($sCode, $oUser);
         }
         
-        return $oUser;
+        return $this->User_GetUserByLogin($oUser->getLogin());
     }
 
 
